@@ -76,6 +76,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Serve built frontend (SPA)
+const distDir = path.join(__dirname, '../../frontend/dist');
+console.log('[Static] dist path:', distDir, 'exists:', fs.existsSync(distDir));
+if (fs.existsSync(distDir)) {
+  app.use(express.static(distDir));
+  app.get(/^\/(?!api|uploads).*/, (req, res) => {
+    res.sendFile(path.join(distDir, 'index.html'));
+  });
+}
+
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({
